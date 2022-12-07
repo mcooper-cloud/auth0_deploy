@@ -1,6 +1,57 @@
-##
-## See also: https://github.com/auth0/auth0-deploy-cli/blob/master/examples/yaml/tenant.yaml
-##
+resourceServers:
+  - name: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-resource-server'
+    identifier: '##AUTH0_API_AUDIENCE##'
+    allow_offline_access: false
+    signing_alg: RS256
+    skip_consent_for_verifiable_first_party_clients: true
+    token_lifetime: 86400
+    token_lifetime_for_web: 7200
+    enforce_policies: true
+    token_dialect: 'access_token_authz'
+    scopes:
+      - value: "create:payment"
+        description: "Create payment"
+      - value: "read:payment"
+        description: "Read payment"
+      - value: "update:payment"
+        description: "Update payment"
+      - value: "delete:payment"
+        description: "Delete payment"
+      - value: "create:subscription"
+        description: "Create subscriptions"
+      - value: "read:subscription"
+        description: "Read subscriptions"
+      - value: "update:subscription"
+        description: "Update subscriptions"
+      - value: "delete:subscription"
+        description: "Delete subscriptions"
+roles:
+  - name: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-OrgAdmin'
+    description: '##PROJECT_NAME## ##ENVIRONMENT## Organization Admin'    
+    permissions:
+      - permission_name: "create:payment"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "read:payment"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "update:payment"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "delete:payment"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "create:subscription"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "read:subscription"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "update:subscription"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "delete:subscription"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+  - name: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-OrgMember'
+    description: '##PROJECT_NAME## ##ENVIRONMENT## Organization Member'
+    permissions:
+      - permission_name: "read:payment"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
+      - permission_name: "read:subscription"
+        resource_server_identifier: '##AUTH0_API_AUDIENCE##'
 clients:
   - name: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-MGMT-API'
     app_type: non_interactive
@@ -20,7 +71,7 @@ clients:
       expiration_type: non-expiring
     sso_disabled: false
     token_endpoint_auth_method: client_secret_post
-  - name: 'Default App'
+  - name: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-web-app'
     allowed_clients: []
     app_type: regular_web
     client_aliases: []
@@ -55,10 +106,10 @@ clients:
     token_endpoint_auth_method: client_secret_post
     organization_usage: allow
 databases:
-  - name: "Username-Password-Authentication"
+  - name: "##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-customers"
     strategy: auth0
     enabled_clients:
-      - 'Default App'
+      - '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-web-app'
     is_domain_connection: false
     options:
       mfa:
@@ -82,7 +133,8 @@ databases:
         min_length: 1
       enabledDatabaseCustomization: false
     realms:
-      - "Username-Password-Authentication"
+      - "##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-customers"
+connections: []
 tenant:
   enabled_locales:
     - en
@@ -94,13 +146,13 @@ tenant:
     universal_login: true
     disable_clickjack_protection_headers: false
   friendly_name: "##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##"
-  picture_url: 'https://cdn.auth0.com/website/bob/press/shield-dark.png'
+  picture_url: '##LOGO_URL##'
   support_email: ''
   support_url: ''
   universal_login:
     colors:
-      page_background: '#ffffff'
-      primary: '#635dff'
+      page_background: '##PAGE_BACKGROUND_COLOR##'
+      primary: '##PRIMARY_COLOR##'
 clientGrants:
   - client_id: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-MGMT-API'
     audience: '##AUTH0_MGMT_API_ENDPOINT##'
@@ -231,11 +283,47 @@ clientGrants:
       - 'create:organization_member_roles'
       - 'read:organization_member_roles'
       - 'delete:organization_member_roles'
+  - client_id: '##PROJECT_NAME##-##ENVIRONMENT##-##SYSTEM_NUMBER##-web-app'
+    audience: '##AUTH0_MGMT_API_ENDPOINT##'
+    scope:
+      - 'create:payments'
+      - 'read:payments'
+      - 'update:payments'
+      - 'delete:payments'
+      - 'create:subscription'
+      - 'read:subscription'
+      - 'update:subscription'
+      - 'delete:subscription'
+
+guardianFactors:
+  - name: duo
+    enabled: false
+  - name: email
+    enabled: false
+  - name: otp
+    enabled: false
+  - name: push-notification
+    enabled: false
+  - name: sms
+    enabled: false
+guardianFactorProviders: []
+guardianFactorTemplates: []
+guardianPolicies:
+  policies: []
+guardianPhoneFactorSelectedProvider:
+  provider: auth0
+guardianPhoneFactorMessageTypes:
+  message_types: []
 branding:
   colors:
-    page_background: '#ffffff'
-    primary: '#635dff'
-  logo_url: 'https://cdn.auth0.com/website/bob/press/shield-dark.png'
+    page_background: '##PAGE_BACKGROUND_COLOR##'
+    primary: '##PRIMARY_COLOR##'
+  logo_url: '##LOGO_URL##'
 prompts:
   universal_login_experience: new
+migrations: {}
 actions: []
+rules: []
+hooks: []
+pages: []
+emailTemplates: []
